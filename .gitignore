@@ -1,0 +1,6 @@
+micro
+vendor/*
+server.crt
+server.key
+micro.iml
+.idea
