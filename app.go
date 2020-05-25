@@ -34,6 +34,7 @@ func main() {
 	rootMux := cmux.New(l)
 
 	// We first match on HTTP 1.1 methods.
+	//grpcL := rootMux.Match(cmux.HTTP2())
 	http1L := rootMux.Match(cmux.HTTP1Fast())
 
 	// If not matched, we assume that its TLS.
@@ -44,7 +45,7 @@ func main() {
 	tlsL = server.TlsListener(tlsL)
 
 	tlsMux := cmux.New(tlsL)
-	grpcL := tlsMux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	grpcL := tlsMux.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 	httpsL := tlsMux.Match(cmux.Any())
 
 	go server.ServeHTTP1(http1L, routeMux)
